@@ -1,8 +1,8 @@
 module.exports = {
   manifest_version: 3,
-  name: 'match-trader-secret-mode',
+  name: 'MatchTrader Secret Mode',
   description: 'Hide Balance, Equity, Funds, PnL',
-  version: '1.0.0',
+  version: '0.1.0',
   action: {
     default_popup: 'popup.html',
   },
