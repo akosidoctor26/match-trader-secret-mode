@@ -1,14 +1,18 @@
-window.addEventListener('load', (evt) => {
+window.addEventListener('load', async (evt) => {
   let numTries = 0;
-  const maxTries = 5;
+  const maxTries = 10;
+
+  chrome.runtime.sendMessage({ type: 'PIN_MT_TAB' });
 
   const intervalId = setInterval(() => {
-    console.log('Trying to go secret mode...');
+    const valuesElems = document.querySelectorAll('.engine-value__label');
+    const profitPill = document.querySelector('.chart-title__symbol-profit');
 
-    const valuesClass = '.engine-value__label';
-    const valuesElems = document.querySelectorAll(valuesClass);
-    if (valuesElems && valuesElems?.length > 0) {
-      valuesElems.forEach((item) => {
+    if (numTries < maxTries) {
+      console.log('Trying to go secret mode...');
+
+      // Header Values
+      valuesElems?.forEach?.((item) => {
         const asterisk = document.createElement('div');
         asterisk.className = 'asterisk';
         asterisk.innerHTML = '*****';
@@ -16,11 +20,12 @@ window.addEventListener('load', (evt) => {
         item?.parentNode?.appendChild(asterisk);
       });
 
-      console.log('Secret mode successful');
-      if (numTries === maxTries) clearInterval(intervalId);
+      // Profit Pill
+      if (profitPill) profitPill?.remove?.();
+
       numTries++;
     } else {
-      console.log('Retrying...');
+      clearInterval(intervalId);
     }
   }, 500);
 });

@@ -11,9 +11,12 @@ module.exports = {
   },
   content_scripts: [
     {
-      matches: ['https://mtr.e8markets.com/*'],
+      matches: [
+        'https://mtr.e8markets.com/*',
+        'https://demo.match-trader.com/*',
+      ],
       js: ['contentScript.js'],
     },
   ],
-  permissions: [],
+  permissions: ['tabs', 'storage'],
 };
