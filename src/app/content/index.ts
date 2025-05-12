@@ -1,31 +1,50 @@
-window.addEventListener('load', async (evt) => {
-  let numTries = 0;
-  const maxTries = 10;
+const headerValues = document.querySelectorAll('.engine-value__label');
+const chartTitle = document.querySelector('.chart-title__main');
+const chartTitleSymbol = document.querySelector('.chart-title__alias');
 
-  chrome.runtime.sendMessage({ type: 'PIN_MT_TAB' });
+console.log('Secret Mode On...');
 
-  const intervalId = setInterval(() => {
-    const valuesElems = document.querySelectorAll('.engine-value__label');
-    const profitPill = document.querySelector('.chart-title__symbol-profit');
+// Header Values
+headerValues?.forEach?.((item) => {
+  const asterisk = document.createElement('div');
+  asterisk.className = 'asterisk secret_mode_elem';
+  asterisk.innerHTML = '*****';
 
-    if (numTries < maxTries) {
-      console.log('Trying to go secret mode...');
+  if (item) {
+    item.nextElementSibling.classList.add('original_elem');
+    item.nextElementSibling.style.display = 'none';
+    item?.parentNode?.appendChild(asterisk);
+  }
+});
 
-      // Header Values
-      valuesElems?.forEach?.((item) => {
-        const asterisk = document.createElement('div');
-        asterisk.className = 'asterisk';
-        asterisk.innerHTML = '*****';
-        item?.nextElementSibling?.remove?.();
-        item?.parentNode?.appendChild(asterisk);
+// To Hide the Profit Pill, remove the parent
+if (chartTitle) {
+  const symbol = document.createElement('div');
+  symbol.className = 'secret_mode_elem';
+  symbol.innerText = chartTitleSymbol?.innerHTML || '';
+  symbol.style.fontSize = '1.25rem';
+
+  chartTitle.parentElement?.append(symbol);
+  chartTitle.style.display = 'none';
+}
+
+// to make sure this will only run once
+if (!window.contentScriptExecuted) {
+  chrome.runtime.onMessage.addListener(async (request) => {
+    if (request.type === 'DISABLE_SECRET_MODE') {
+      console.log('Secret Mode Off...');
+
+      chartTitle.style.display = 'flex';
+
+      document.querySelectorAll('.secret_mode_elem')?.forEach((secret) => {
+        secret.style.display = 'none';
       });
 
-      // Profit Pill
-      if (profitPill) profitPill?.remove?.();
-
-      numTries++;
+      document.querySelectorAll('.original_elem')?.forEach((secret) => {
+        secret.style.display = 'block';
+      });
     } else {
-      clearInterval(intervalId);
     }
-  }, 500);
-});
+  });
+  window.contentScriptExecuted = true;
+}

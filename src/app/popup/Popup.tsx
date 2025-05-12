@@ -24,6 +24,10 @@ const Popup = () => {
     chrome.runtime.sendMessage({ type: 'PIN_MT_TAB' });
   };
 
+  const setSecretMode = () => {
+    chrome.runtime.sendMessage({ type: 'ENABLE_SECRET_MODE' });
+  };
+
   return (
     <div style={{ width: 300, margin: '12px' }}>
       <h3>Match Trader Secret Mode</h3>
@@ -52,6 +56,9 @@ const Popup = () => {
       </div>
       <div>
         <p>TODO: Add E8 Affiliate</p>
+      </div>
+      <div>
+        <button onClick={setSecretMode}>Secret Mode</button>
       </div>
     </div>
   );

@@ -23,6 +23,14 @@ module.exports = {
       chunks: ['popup', 'contentScript', 'background'],
     }),
     new GenerateJsonPlugin('manifest.json', manifest),
+    new CopyPlugin({
+      patterns: [
+        {
+          from: './images',
+          to: './images',
+        },
+      ],
+    }),
   ],
   module: {
     rules: [
