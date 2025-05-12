@@ -19,7 +19,7 @@ chrome.action.onClicked.addListener(async (tab) => {
 
     if (nextState === 'ON') {
       chrome.tabs.update(tabId, { pinned: true }, () => {
-        console.log(`${tab.id} set to pinned=${true} successfully!`);
+        console.log(`${tabId} set to pinned=${true} successfully!`);
       });
 
       // Run the script file when the user turns the extension on

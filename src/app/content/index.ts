@@ -2,8 +2,6 @@ const headerValues = document.querySelectorAll('.engine-value__label');
 const chartTitle = document.querySelector('.chart-title__main');
 const chartTitleSymbol = document.querySelector('.chart-title__alias');
 
-console.log('Secret Mode On...');
-
 // Header Values
 headerValues?.forEach?.((item) => {
   const asterisk = document.createElement('div');
@@ -27,23 +25,23 @@ if (chartTitle) {
   chartTitle.parentElement?.append(symbol);
   chartTitle.style.display = 'none';
 }
+console.log('Secret Mode On...');
 
 // to make sure this will only run once
 if (!window.contentScriptExecuted) {
   chrome.runtime.onMessage.addListener(async (request) => {
     if (request.type === 'DISABLE_SECRET_MODE') {
-      console.log('Secret Mode Off...');
+      if (chartTitle) chartTitle.style.display = 'flex';
 
-      chartTitle.style.display = 'flex';
-
-      document.querySelectorAll('.secret_mode_elem')?.forEach((secret) => {
+      document.querySelectorAll('.secret_mode_elem')?.forEach?.((secret) => {
         secret.style.display = 'none';
       });
 
-      document.querySelectorAll('.original_elem')?.forEach((secret) => {
+      document.querySelectorAll('.original_elem')?.forEach?.((secret) => {
         secret.style.display = 'block';
       });
-    } else {
+
+      console.log('Secret Mode Off...');
     }
   });
   window.contentScriptExecuted = true;
