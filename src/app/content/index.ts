@@ -33,7 +33,7 @@ if (chartTitle) {
 // to make sure this will only run once
 if (!window.contentScriptExecuted) {
   chrome.runtime.onMessage.addListener(async (request) => {
-    if (request.type === 'DISABLE_SECRET_MODE') {
+    if (request.type === EVENT_TYPES.DISABLE_SECRET) {
       if (chartTitle) chartTitle.style.display = 'flex';
 
       document.querySelectorAll('.secret_mode_elem')?.forEach?.((secret) => {
@@ -47,12 +47,13 @@ if (!window.contentScriptExecuted) {
       console.log('Secret Mode Off...');
     }
   });
+
+  // clear local storage before unloading
+  window.onbeforeunload = () => {
+    chrome.runtime.sendMessage({
+      type: EVENT_TYPES.CLEAR,
+    });
+  };
+
   window.contentScriptExecuted = true;
 }
-
-// clear local storage before unloading
-window.onbeforeunload = () => {
-  chrome.runtime.sendMessage({
-    type: EVENT_TYPES.CLEAR,
-  });
-};

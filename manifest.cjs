@@ -28,6 +28,5 @@ module.exports = {
   //     js: ['contentScript.js'],
   //   },
   // ],
-  host_permissions: ['<all_urls>'],
   permissions: ['storage', 'activeTab', 'scripting'],
 };

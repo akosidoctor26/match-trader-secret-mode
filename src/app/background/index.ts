@@ -24,7 +24,7 @@ chrome.runtime.onMessage.addListener(async (request) => {
         // if secret is disabled
         // send message to the content to show the hidden original elements
         chrome.tabs.sendMessage(tabId, {
-          type: 'DISABLE_SECRET_MODE',
+          type: EVENT_TYPES.DISABLE_SECRET,
         });
       }
     }

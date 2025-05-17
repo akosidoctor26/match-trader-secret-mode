@@ -34,8 +34,9 @@ const Popup = () => {
       // using the active tab's id as a key, get the enabled value from the local storage
       const local = await chrome?.storage?.local?.get(tabId.toString());
 
-      // set state to reflect on the UI
-      setEnabled(local[tabId]);
+      if (local)
+        // set state to reflect on the UI
+        setEnabled(local[tabId] === undefined ? false : local[tabId]);
     }
   };
 
