@@ -1,38 +1,38 @@
-chrome.runtime.onInstalled.addListener(() => {
-  chrome.action.setBadgeText({ text: 'OFF' });
-});
+import { EVENT_TYPES } from '../constants';
 
-//#region Handler when action badge is clicked
-chrome.action.onClicked.addListener(async (tab) => {
-  const tabId = tab.id;
-  if (tabId) {
-    // Retrieve the action badge to check if the extension is 'ON' or 'OFF'
-    const prevState = await chrome.action.getBadgeText({ tabId });
-    // Next state will always be the opposite
-    const nextState = prevState === 'ON' ? 'OFF' : 'ON';
+chrome.runtime.onMessage.addListener(async (request) => {
+  const [tab] = await chrome.tabs.query({ active: true });
+  const tabId = tab?.id;
 
-    // Set the action badge to the next state
-    await chrome.action.setBadgeText({
-      tabId,
-      text: nextState,
-    });
+  // when the secret's switch is changed from the popup...
+  if (request.type === EVENT_TYPES.ENABLE_SECRET) {
+    const enabled = request.enabled;
 
-    if (nextState === 'ON') {
-      chrome.tabs.update(tabId, { pinned: true }, () => {
-        console.log(`${tabId} set to pinned=${true} successfully!`);
-      });
+    if (tabId) {
+      if (enabled) {
+        // pin the tab because the PnL is displayed in the title
+        chrome.tabs.update(tabId, { pinned: true }, () => {
+          console.log(`${tabId} set to pinned=${true} successfully!`);
+        });
 
-      // Run the script file when the user turns the extension on
-      await chrome.scripting.executeScript({
-        files: ['contentScript.js'],
-        target: { tabId },
-      });
-    } else if (nextState === 'OFF') {
-      // Show the hidden original elements when secret mode is disabled
-      chrome.tabs.sendMessage(tabId, {
-        type: 'DISABLE_SECRET_MODE',
-      });
+        // Run the script file
+        await chrome.scripting.executeScript({
+          files: ['contentScript.js'],
+          target: { tabId },
+        });
+      } else {
+        // if secret is disabled
+        // send message to the content to show the hidden original elements
+        chrome.tabs.sendMessage(tabId, {
+          type: 'DISABLE_SECRET_MODE',
+        });
+      }
     }
   }
+
+  // when the page is about to unload
+  if (request.type === EVENT_TYPES.CLEAR) {
+    // remove the kv pair in the local storage to avoid polluting the storage
+    if (tabId) await chrome.storage.local.remove(tabId?.toString());
+  }
 });
-//#endregion

@@ -1,3 +1,6 @@
+import { EVENT_TYPES } from '../constants';
+
+console.log('Secret Mode On...');
 const headerValues = document.querySelectorAll('.engine-value__label');
 const chartTitle = document.querySelector('.chart-title__main');
 const chartTitleSymbol = document.querySelector('.chart-title__alias');
@@ -5,6 +8,7 @@ const chartTitleSymbol = document.querySelector('.chart-title__alias');
 // Header Values
 headerValues?.forEach?.((item) => {
   const asterisk = document.createElement('div');
+  asterisk.style.color = '#42c4e8';
   asterisk.className = 'asterisk secret_mode_elem';
   asterisk.innerHTML = '*****';
 
@@ -25,7 +29,6 @@ if (chartTitle) {
   chartTitle.parentElement?.append(symbol);
   chartTitle.style.display = 'none';
 }
-console.log('Secret Mode On...');
 
 // to make sure this will only run once
 if (!window.contentScriptExecuted) {
@@ -46,3 +49,10 @@ if (!window.contentScriptExecuted) {
   });
   window.contentScriptExecuted = true;
 }
+
+// clear local storage before unloading
+window.onbeforeunload = () => {
+  chrome.runtime.sendMessage({
+    type: EVENT_TYPES.CLEAR,
+  });
+};

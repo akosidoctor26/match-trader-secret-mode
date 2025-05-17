@@ -1,47 +1,60 @@
 import React, { useEffect, useState } from 'react';
+import { EVENT_TYPES } from '../constants';
+import './popup.css';
 
 const Popup = () => {
-  const [allowPin, setAllowPin] = useState<boolean>(true);
+  const [enabled, setEnabled] = useState(false);
+  const [tabId, setTabId] = useState<number>(-1);
 
-  const setupPinSettings = async () => {
-    const local = await chrome?.storage?.local?.get(['pinTab']);
-    if (local.pinTab === undefined) {
-      setAllowPin(true);
-      await chrome?.storage?.local?.set({ pinTab: true });
-    } else {
-      setAllowPin(local?.pinTab);
+  // event handler when switch is changed
+  const onChangePinTab = async (e) => {
+    const isChecked = e.target.checked;
+
+    // set state to reflect on the UI
+    setEnabled(isChecked);
+
+    // set the storage for future use
+    await chrome?.storage?.local?.set({ [tabId]: isChecked });
+
+    // send message to background so that it can inject the script
+    await chrome.runtime.sendMessage({
+      type: EVENT_TYPES.ENABLE_SECRET,
+      enabled: isChecked,
+    });
+  };
+
+  const manageSecretSettings = async () => {
+    // get the active tab's id
+    const [tab] = await chrome?.tabs?.query({ active: true });
+    const tabId = tab.id;
+
+    if (tabId) {
+      setTabId(tab.id);
+
+      // using the active tab's id as a key, get the enabled value from the local storage
+      const local = await chrome?.storage?.local?.get(tabId.toString());
+
+      // set state to reflect on the UI
+      setEnabled(local[tabId]);
     }
   };
 
   useEffect(() => {
-    setupPinSettings();
+    // When popup loads, check if secret mode is enabled for this tab from storage
+    manageSecretSettings();
   }, []);
 
-  const onChangePinTab = async () => {
-    const newVal = !allowPin;
-    setAllowPin(newVal);
-    await chrome?.storage?.local?.set({ pinTab: newVal });
-    chrome.runtime.sendMessage({ type: 'PIN_MT_TAB' });
-  };
-
-  const setSecretMode = () => {
-    chrome.runtime.sendMessage({ type: 'ENABLE_SECRET_MODE' });
-  };
-
   return (
-    <div style={{ width: 300, margin: '12px' }}>
-      <h3>Match Trader Secret Mode</h3>
-      <div style={{ margin: '12px 0' }}>
-        <label>Domain: </label>
-        <input placeholder="mtr.e8markets.com" type="text" />
+    <div style={{ width: 300, margin: '18px 12px' }}>
+      <div style={{ display: 'flex', alignItems: 'center' }}>
+        <label className="switch">
+          <input type="checkbox" onChange={onChangePinTab} checked={enabled} />
+          <span className="slider round"></span>
+        </label>
+        <div style={{ marginLeft: 20, fontSize: 18 }}>
+          Secret Mode: {enabled ? 'ON' : 'OFF'}
+        </div>
       </div>
-      <div>
-        <span>
-          <input type="checkbox" onChange={onChangePinTab} checked={allowPin} />
-          Pin tab to Hide PnL
-        </span>
-      </div>
-      <hr />
       <div>
         <p>
           If this Chrome extension has made your trading smoother, more
@@ -51,14 +64,16 @@ const Popup = () => {
         <a href="https://buymeacoffee.com/tieroneapps" target="_blank">
           Buy me a coffee
         </a>
-        <br />
         <p style={{ fontSize: 10 }}>https://buymeacoffee.com/tieroneapps</p>
       </div>
-      <div>
-        <p>TODO: Add E8 Affiliate</p>
-      </div>
-      <div>
-        <button onClick={setSecretMode}>Secret Mode</button>
+      <div style={{ marginTop: '24px' }}>
+        <a href="https://e8markets.com/a/B3C909BA" target="_blank">
+          Join E8 Markets today!
+        </a>
+        <p>Over $53,000,000 paid to Traders.</p>
+        <p>
+          Get 5% Off: <b>MTSECRETOFF5</b>
+        </p>
       </div>
     </div>
   );
