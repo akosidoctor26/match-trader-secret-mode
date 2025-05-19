@@ -57,3 +57,12 @@ if (!window.contentScriptExecuted) {
 
   window.contentScriptExecuted = true;
 }
+
+const resetTimer = () => {
+  chrome.runtime.sendMessage({ type: 'Wake up' });
+};
+window.addEventListener('load', resetTimer, true);
+var events = ['mousedown', 'mousemove', 'keypress', 'scroll', 'touchstart'];
+events.forEach(function (name) {
+  document.addEventListener(name, resetTimer, true);
+});

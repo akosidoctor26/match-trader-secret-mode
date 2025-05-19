@@ -4,6 +4,10 @@ chrome.runtime.onMessage.addListener(async (request) => {
   const [tab] = await chrome.tabs.query({ active: true });
   const tabId = tab?.id;
 
+  if (request.type === 'Wake up') {
+    // console.log(request);
+  }
+
   // when the secret's switch is changed from the popup...
   if (request.type === EVENT_TYPES.ENABLE_SECRET) {
     const enabled = request.enabled;
