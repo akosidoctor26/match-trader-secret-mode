@@ -40,3 +40,7 @@ chrome.runtime.onMessage.addListener(async (request) => {
     if (tabId) await chrome.storage.local.remove(tabId?.toString());
   }
 });
+
+chrome.tabs.onActivated.addListener(() => {
+  // console.log('tab activated');
+});
