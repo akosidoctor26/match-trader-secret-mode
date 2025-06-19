@@ -9,7 +9,7 @@ module.exports = {
   entry: {
     contentScript: './src/app/content/index.ts',
     background: './src/app/background/index.ts',
-    options: './src/app/options/OptionsIndex.tsx',
+    // options: './src/app/options/OptionsIndex.tsx',
     popup: './src/app/popup/PopupIndex.tsx',
   },
   output: {
@@ -23,11 +23,11 @@ module.exports = {
       filename: 'popup.html',
       chunks: ['popup', 'contentScript', 'background'],
     }),
-    new HtmlWebpackPlugin({
-      template: './src/app/options/options.html',
-      filename: 'options.html',
-      chunks: ['options', 'contentScript', 'background'],
-    }),
+    // new HtmlWebpackPlugin({
+    //   template: './src/app/options/options.html',
+    //   filename: 'options.html',
+    //   chunks: ['options', 'contentScript', 'background'],
+    // }),
     new GenerateJsonPlugin('manifest.json', manifest),
     new CopyPlugin({
       patterns: [

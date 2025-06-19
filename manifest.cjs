@@ -15,10 +15,10 @@ module.exports = {
   background: {
     service_worker: 'background.js',
   },
-  options_ui: {
-    page: 'options.html',
-    open_in_tab: false,
-  },
+  // options_ui: {
+  //   page: 'options.html',
+  //   open_in_tab: false,
+  // },
   // content_scripts: [
   //   {
   //     matches: [
