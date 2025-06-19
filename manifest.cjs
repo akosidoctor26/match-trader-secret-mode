@@ -19,14 +19,14 @@ module.exports = {
   //   page: 'options.html',
   //   open_in_tab: false,
   // },
-  // content_scripts: [
-  //   {
-  //     matches: [
-  //       'https://mtr.e8markets.com/*',
-  //       'https://demo.match-trader.com/*',
-  //     ],
-  //     js: ['contentScript.js'],
-  //   },
-  // ],
-  permissions: ['storage', 'activeTab', 'scripting'],
+  content_scripts: [
+    {
+      matches: [
+        'https://mtr.e8markets.com/*',
+        'https://demo.match-trader.com/*',
+      ],
+      js: ['contentScript.js'],
+    },
+  ],
+  permissions: ['activeTab', 'scripting'],
 };

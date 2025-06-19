@@ -1,46 +1,23 @@
-import { EVENT_TYPES } from '../constants';
+const init = async () => {
+  const tabs = await chrome.tabs.query({
+    url: ['https://mtr.e8markets.com/*'],
+  });
 
-chrome.runtime.onMessage.addListener(async (request) => {
-  const [tab] = await chrome.tabs.query({ active: true });
-  const tabId = tab?.id;
-
-  if (request.type === 'Wake up') {
-    // console.log(request);
-  }
-
-  // when the secret's switch is changed from the popup...
-  if (request.type === EVENT_TYPES.ENABLE_SECRET) {
-    const enabled = request.enabled;
-
-    if (tabId) {
-      if (enabled) {
-        // pin the tab because the PnL is displayed in the title
-        chrome.tabs.update(tabId, { pinned: true }, () => {
-          console.log(`${tabId} set to pinned=${true} successfully!`);
-        });
-
-        // Run the script file
-        await chrome.scripting.executeScript({
-          files: ['contentScript.js'],
-          target: { tabId },
-        });
-      } else {
-        // if secret is disabled
-        // send message to the content to show the hidden original elements
-        chrome.tabs.sendMessage(tabId, {
-          type: EVENT_TYPES.DISABLE_SECRET,
-        });
-      }
+  tabs?.forEach((tab) => {
+    if (tab && tab.id) {
+      chrome.tabs.update(tab?.id, { pinned: true }, () => {
+        console.log(`E8 Markets ${tab.id} set to successfully!`);
+      });
     }
-  }
+  });
+};
 
-  // when the page is about to unload
-  if (request.type === EVENT_TYPES.CLEAR) {
-    // remove the kv pair in the local storage to avoid polluting the storage
-    if (tabId) await chrome.storage.local.remove(tabId?.toString());
+chrome.runtime.onMessage.addListener(async function (
+  request,
+  sender,
+  sendResponse
+) {
+  if (request?.type == 'PIN_MT_TAB') {
+    init();
   }
-});
-
-chrome.tabs.onActivated.addListener(() => {
-  // console.log('tab activated');
 });
